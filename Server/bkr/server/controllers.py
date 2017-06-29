@@ -123,9 +123,11 @@ class Devices:
                         widgets.PaginateDataGrid.Column(name='driver', getter=lambda x: x.driver, title='Driver', options=dict(sortable=True)),
                         widgets.PaginateDataGrid.Column(name='vendor_id', getter=lambda x: x.vendor_id, title='Vendor ID', options=dict(sortable=True)),
                         widgets.PaginateDataGrid.Column(name='device_id', getter=lambda x: x.device_id, title='Device ID', options=dict(sortable=True)),
-                        widgets.PaginateDataGrid.Column(name='subsys_vendor_id', getter=lambda x: x.subsys_vendor_id, title='Subsys Vendor ID', options=dict(sortable=True)),
+			widgets.PaginateDataGrid.Column(name='subsys_vendor_id', getter=lambda x: x.subsys_vendor_id, title='Subsys Vendor ID', options=dict(sortable=True)),
                         widgets.PaginateDataGrid.Column(name='subsys_device_id', getter=lambda x: x.subsys_device_id, title='Subsys Device ID', options=dict(sortable=True)),
-                       ])
+                       widgets.PaginateDataGrid.Column(name='subsys_device_id', getter=lambda x: x.fw_version, title='Firmware Version', options=dict(sortable=True)),
++                        widgets.PaginateDataGrid.Column(name='subsys_device_id', getter=lambda x: x.fw_date, title='Firmware Date', options=dict(sortable=True)),
+			])
         return dict(title="Devices", 
                     grid = devices_grid, 
                     search_bar=None, 

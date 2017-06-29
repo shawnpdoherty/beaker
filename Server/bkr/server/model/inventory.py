@@ -297,6 +297,8 @@ class System(DeclarativeMappedObject, ActivityMixin):
     kernel_type_id = Column(Integer, ForeignKey('kernel_type.id'),
            default=select([KernelType.id], limit=1).where(KernelType.kernel_type==u'default').correlate(None),
            nullable=False)
+    fw_version = Column(String(32))
+    fw_date = Column(DateTime, default=None)
     kernel_type = relationship('KernelType')
     devices = relationship('Device', secondary=system_device_map,
             back_populates='systems')
@@ -1245,6 +1247,13 @@ class System(DeclarativeMappedObject, ActivityMixin):
                     method(inventory[key])
         self.date_modified = datetime.utcnow()
         return 0
+
+    def updateSystemFirmware(self, firmware):
+	# TODO finish this method
+	if firmware
+
+	self.fw_version = firmware['version']
+	self.fw_date = firmware['date'] 
 
     def updateHypervisor(self, hypervisor):
         if hypervisor:
@@ -2362,6 +2371,8 @@ class Device(DeclarativeMappedObject):
     device_class = relationship(DeviceClass)
     date_added = Column(DateTime, default=datetime.utcnow, nullable=False)
     systems = relationship(System, secondary=system_device_map, back_populates='devices')
+    fw_version = Column(String(32))
+    fw_date = Column(DateTime, default=None)
 
 Index('ix_device_pciid', Device.vendor_id, Device.device_id)
 

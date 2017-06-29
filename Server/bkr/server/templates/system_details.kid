@@ -156,6 +156,12 @@
         <td>
             ${device.subsys_device_id}
         </td>
+	<td>
+	    ${device.fw_revision}
+	</td>
+	<td>
+	    ${device.fw_date}
+	</td>
     </tr>
   </tbody>
 </table>
