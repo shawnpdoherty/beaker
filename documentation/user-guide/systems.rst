@@ -145,6 +145,12 @@ logged in as either the owner of the System, or an admin.
 
 -  *Serial Number*: Serial Number of the machine.
 
+-  *Firmware Version*: System firmware version installed on the machine,
+                       commonly referred to as the "BIOS" or "UEFI" version.
+
+-  *Firmware Date*: System firmware date (optional). Usually represents the
+                    build data of the firmware.
+
 -  *Condition*: This can be one of the following:
 
    -  *Automated*: In a working state, can have jobs run against it.

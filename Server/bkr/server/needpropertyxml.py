@@ -627,6 +627,15 @@ class XmlSystemSerial(ElementWrapper):
             query = getattr(System.serial, op)(value)
         return (joins, query)
 
+class XmlSystemFirmware(ElementWrapper):
+    """
+    Pick a system with a matching firmware version.
+    """
+    def filter(self, joins):
+        pass
+    # TODO: write this, was thinking something like:
+    # <sysfw version="blah" date="blah"/>
+
 class XmlSystemModel(ElementWrapper):
     """
     Pick a system wth the correct model.

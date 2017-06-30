@@ -527,6 +527,20 @@ def _update_system(system, data={}):
                 record_activity(u'Serial Number', system.serial, new_serial_number)
                 system.serial = new_serial_number
                 changed = True
+        if 'sysfw_version' in data:
+            obj = system.sysfw_version
+            new = data['sysfw_version'] or None
+            if new != obj:
+                record_activity(u'Firmware Version', obj, new)
+                obj = new
+                changed = True
+        if 'sysfw_date' in data:
+            obj = system.sysfw_date
+            new = data['sysfw_date'] or None
+            if new != obj:
+                record_activity(u'Firmware Date', obj, new)
+                obj = new
+                changed = True
         if 'mac_address' in data:
             new_mac_address = data['mac_address'] or None
             if new_mac_address != system.mac_address:
@@ -599,6 +613,8 @@ def add_system():
     :jsonparam string vendor: Vendor who produced the system.
     :jsonparam string model: Model name or number.
     :jsonparam string serial_number: Serial number.
+    :jsonparam string sysfw_version: Firmware version.
+    :jsonparam string sysfw_date: Firmware date.
     :jsonparam string mac_address: MAC address of the default network interface.
     :jsonparam int memory: Amount of memory (MB) installed in the system.
     :jsonparam int numa_nodes: Number of nodes in the system's NUMA topology.

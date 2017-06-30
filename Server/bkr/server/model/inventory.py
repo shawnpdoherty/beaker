@@ -17,7 +17,7 @@ from kid import XML
 from markdown import markdown
 from sqlalchemy import (Table, Column, ForeignKey, UniqueConstraint, Index,
         Integer, Unicode, UnicodeText, DateTime, String, Boolean, Numeric, Float,
-        BigInteger, VARCHAR, TEXT, event)
+        BigInteger, VARCHAR, TEXT, event, Date)
 from sqlalchemy.sql import select, and_, or_, not_, case, func
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import (mapper, relationship, synonym,
@@ -298,6 +298,8 @@ class System(DeclarativeMappedObject, ActivityMixin):
            default=select([KernelType.id], limit=1).where(KernelType.kernel_type==u'default').correlate(None),
            nullable=False)
     kernel_type = relationship('KernelType')
+    sysfw_version = Column(String(32))
+    sysfw_date = Column(Date, default=None)
     devices = relationship('Device', secondary=system_device_map,
             back_populates='systems')
     disks = relationship('Disk', back_populates='system',
@@ -492,6 +494,8 @@ class System(DeclarativeMappedObject, ActivityMixin):
             'vendor': self.vendor,
             'serial_number': self.serial,
             'mac_address': self.mac_address,
+            'sysfw_version': self.sysfw_version,
+            'sysfw_date': self.sysfw_date,
             'memory': self.memory,
             'numa_nodes': None,
             'cpu_model_name': None,
@@ -1145,7 +1149,9 @@ class System(DeclarativeMappedObject, ActivityMixin):
     def get_update_method(self,obj_str):
         methods = dict ( Cpu = self.updateCpu, Arch = self.updateArch,
                          Devices = self.updateDevices, Numa = self.updateNuma,
-                         Hypervisor = self.updateHypervisor, Disk = self.updateDisk)
+                         Hypervisor = self.updateHypervisor,
+                         Disk = self.updateDisk,
+                         SystemFirmware=self.updateSystemFirmware)
         return methods[obj_str]
 
     def update_legacy(self, inventory):
@@ -1246,6 +1252,10 @@ class System(DeclarativeMappedObject, ActivityMixin):
         self.date_modified = datetime.utcnow()
         return 0
 
+    def updateSystemFirmware(self, firmware):
+        self.sysfw_version = firmware['sysfw_version']
+        self.sysfw_date = firmware['sysfw_date']
+
     def updateHypervisor(self, hypervisor):
         if hypervisor:
             hvisor = Hypervisor.by_name(hypervisor)
@@ -1321,7 +1331,8 @@ class System(DeclarativeMappedObject, ActivityMixin):
                                    bus = device['bus'],
                                    driver = device['driver'],
                                    device_class_id = device_class.id,
-                                   description = device['description'])
+                                   description = device['description'],
+                                   fw_version = device['fw_version'])
             if mydevice not in self.devices:
                 self.devices.append(mydevice)
                 self.record_activity(user=identity.current.user,
@@ -2347,7 +2358,7 @@ class Device(DeclarativeMappedObject):
     __table_args__ = (
         UniqueConstraint('vendor_id', 'device_id', 'subsys_device_id',
                'subsys_vendor_id', 'bus', 'driver', 'description',
-               'device_class_id', name='device_uix_1'),
+               'device_class_id', 'fw_version', name='device_uix_1'),
         {'mysql_engine': 'InnoDB'}
     )
     id = Column(Integer, autoincrement=True, primary_key=True)
@@ -2362,6 +2373,7 @@ class Device(DeclarativeMappedObject):
     device_class = relationship(DeviceClass)
     date_added = Column(DateTime, default=datetime.utcnow, nullable=False)
     systems = relationship(System, secondary=system_device_map, back_populates='devices')
+    fw_version = Column(String(32), default="Unknown")
 
 Index('ix_device_pciid', Device.vendor_id, Device.device_id)
 
