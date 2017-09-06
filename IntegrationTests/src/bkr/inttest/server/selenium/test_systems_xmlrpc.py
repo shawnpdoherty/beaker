@@ -621,7 +621,7 @@ class PushXmlRpcTest(XmlRpcTestCase):
             'type': 'IDE', 'bus': u'pci', 'driver': u'PIIX_IDE',
             'vendorID': '8086', 'deviceID': '7111',
             'description': u'82371AB/EB/MB PIIX4 IDE',
-            'subsysVendorID': '0000', 'subsysDeviceID': '0000',
+            'subsysVendorID': '0000', 'subsysDeviceID': '0000', 'fw_version': 'unknown'
         }]})
         with session.begin():
             session.refresh(system)
@@ -781,7 +781,7 @@ class PushXmlRpcTest(XmlRpcTestCase):
             'type': None, 'bus': u'pci', 'driver': u'noclass',
             'description': u'Oh so very tacky',
             'vendorID': None, 'deviceID': None,
-            'subsysVendorID': None, 'subsysDeviceID': None,
+            'subsysVendorID': None, 'subsysDeviceID': None, 'fw_version': 'Unknown'
         }]}
         self.server.push(system1.fqdn, device_data)
         # DeviceClass('NONE') already exists now, so do it again
