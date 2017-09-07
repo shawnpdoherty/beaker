@@ -1145,8 +1145,7 @@ class System(DeclarativeMappedObject, ActivityMixin):
     def get_update_method(self,obj_str):
         methods = dict ( Cpu = self.updateCpu, Arch = self.updateArch,
                          Devices = self.updateDevices, Numa = self.updateNuma,
-                         Hypervisor = self.updateHypervisor,
-                         Disk = self.updateDisk)
+                         Hypervisor = self.updateHypervisor, Disk = self.updateDisk)
         return methods[obj_str]
 
     def update_legacy(self, inventory):
