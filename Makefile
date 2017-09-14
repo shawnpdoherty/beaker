@@ -38,7 +38,7 @@ deps:
 	yum builddep beaker.spec -y
 
 .PHONY: devel
-devel:
+devel: build
 	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i devel; done
 
 .PHONY: deps
