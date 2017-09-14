@@ -5,6 +5,7 @@
 # (at your option) any later version.
 
 INITSYS :=  $(shell if [ -f /usr/bin/systemctl ]; then echo "systemd"; else echo "sysvinit"; fi)
+DEPCMD  :=  $(shell if [ -f /usr/bin/dnf ]; then echo "dnf builddep"; else echo "yum-builddep"; fi)
 
 SUBDIRS := Common Client documentation
 ifdef WITH_SERVER
@@ -18,7 +19,7 @@ ifdef WITH_INTTESTS
 endif
 
 .PHONY: build
-build:
+build: setup
 	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i build; done
 
 .PHONY: install
@@ -33,14 +34,14 @@ clean:
 check:
 	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i check; done
 
-.PHONY: deps
-deps:
-	yum builddep beaker.spec -y
-
 .PHONY: devel
 devel: build
 	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i devel; done
 
-.PHONY: deps
-deps:
-	sudo dnf builddep beaker.spec
+.PHONY: setup
+setup:
+	sudo $(DEPCMD) -y beaker.spec
+
+submods:
+	git submodules init
+	git submodules update
