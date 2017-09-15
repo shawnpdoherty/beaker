@@ -19,3 +19,19 @@ clean:
 .PHONY: check
 check:
 	./run-tests.sh
+
+.PHONY: devel
+devel:
+	-if [[ $(INITSYS) == "systemd" ]] ; then \
+		systemctl stop beakerd; \
+	else \
+		service beakerd stop; \
+	fi
+	DESTDIR="/" make install
+	if [[ $(INITSYS) == "systemd" ]] ; then \
+		cp systemd/beakerd.service /usr/lib/systemd/system/beakerd.service; \
+		systemctl daemon-reload; \
+		systemctl restart beakerd; \
+	else \
+		service beakerd restart; \
+	fi

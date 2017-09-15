@@ -4,6 +4,9 @@
 # the Free Software # Foundation, either version 2 of the License, or
 # (at your option) any later version.
 
+INITSYS :=  $(shell if [ -f /usr/bin/systemctl ]; then echo "systemd"; else echo "sysvinit"; fi)
+DEPCMD  :=  $(shell if [ -f /usr/bin/dnf ]; then echo "dnf builddep"; else echo "yum-builddep"; fi)
+
 SUBDIRS := Common Client documentation
 ifdef WITH_SERVER
     SUBDIRS += Server
@@ -15,18 +18,26 @@ ifdef WITH_INTTESTS
     SUBDIRS += IntegrationTests
 endif
 
-.PHONY: build
-build:
-	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i build; done
+.PHONY: build install delean check devel deps submods
 
-.PHONY: install
+build: deps
+	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i build; done
+
 install:
-	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
+	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i install; done
 
-.PHONY: clean
 clean:
-	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
+	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i clean; done
 
-.PHONY: check
 check:
-	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i check; done
+	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i check; done
+
+devel: build
+	set -e; for i in $(SUBDIRS); do $(MAKE) INITSYS=$(INITSYS) -C $$i devel; done
+
+deps:
+	sudo $(DEPCMD) -y beaker.spec
+
+submods:
+	git submodules init
+	git submodules update
