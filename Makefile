@@ -21,11 +21,9 @@ endif
 build: setup
 	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i build; done
 
-.PHONY: install
 install:
 	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i install; done
 
-.PHONY: clean
 clean:
 	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i clean; done
 
