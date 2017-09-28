@@ -1,6 +1,8 @@
 # License: GPL v2 or later
 # Copyright Red Hat Inc. 2008
 
+INITSYS :=  $(shell if [ -f /usr/bin/systemctl ]; then echo "systemd"; else echo "sysvinit"; fi)
+
 .PHONY: build
 build:
 	env PYTHONPATH=../Common$${PYTHONPATH:+:$$PYTHONPATH} \
