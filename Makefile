@@ -18,7 +18,7 @@ ifdef WITH_INTTESTS
 endif
 
 .PHONY: build
-build: setup
+build:
 	set -e; for i in $(SUBDIRS); do $(MAKE) -C $$i build; done
 
 .PHONY: install
